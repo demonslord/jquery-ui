@@ -369,27 +369,12 @@ $.widget("ui.selectmenu", {
 					thisLi.appendTo( this.list );
 				}
 
-				// append icon if option is specified
-				if ( o.icons ) {
-					for ( var j in o.icons ) {
-						if (thisLi.is(o.icons[ j ].find)) {
-							thisLi
-								.data( 'optionClasses', selectOptionData[ i ].classes + ' ui-selectmenu-hasIcon' )
-								.addClass( 'ui-selectmenu-hasIcon' );
-							var iconClass = o.icons[ j ].icon || "";
-							thisLi
-								.find( 'a:eq(0)' )
-								.prepend( '<span class="ui-selectmenu-item-icon ui-icon ' + iconClass + '"></span>' );
-							if ( selectOptionData[ i ].bgImage ) {
-								thisLi.find( 'span' ).css( 'background-image', selectOptionData[ i ].bgImage );
-							}
-						}
-					}
-				}
 			}
 		} else {
 			$(' <li role="presentation"><a href="#nogo" tabindex="-1" role="option"></a></li>' ).appendTo( this.list );
 		}
+		// append icon if option is specified
+		self._refreshIcons();
 		// we need to set and unset the CSS classes for dropdown and popup style
 		var isDropDown = ( o.style == 'dropdown' );
 		this.newelement
@@ -710,6 +695,9 @@ $.widget("ui.selectmenu", {
 				.add( this.newelement )
 				.add( this.list )[ value ? 'addClass' : 'removeClass' ]( 'ui-selectmenu-disabled ' + 'ui-state-disabled' )
 				.attr( "aria-disabled" , value );
+		}else if ( key == 'icons' ) {
+			this._refreshIcons(); //set icons
+			this._refreshValue(); //resfresh status span
 		}
 	},
 
@@ -846,6 +834,27 @@ $.widget("ui.selectmenu", {
 			.removeAttr( 'style' )
 			.zIndex( this.element.zIndex() + 1 )
 			.position( $.extend( positionDefault, o.positionOptions ) );
+	},
+	
+	_refreshIcons: function() {
+		var o = this.options;
+		if (o.icons) {
+			for (var j in o.icons) {
+				var $thisLi = this.list.find(o.icons[j].find);	
+				if ($thisLi) {
+					$thisLi
+						.data('optionClasses', $thisLi.attr('class') + ' ' + this.widgetBaseClass + '-hasIcon')
+						.addClass(this.widgetBaseClass + '-hasIcon');
+					var iconClass = o.icons[j].icon || "";
+					$thisLi
+						.find('a:eq(0)')
+						.prepend('<span class="' + this.widgetBaseClass + '-item-icon ui-icon ' + iconClass + '"></span>');
+					if (o.bgImage) {
+						$thisLi.find('span').css('background-image', o.bgImage.call($thisLi));
+					}
+				}
+			}
+		}
 	}
 });
 
