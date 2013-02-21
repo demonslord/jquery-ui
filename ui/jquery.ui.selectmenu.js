@@ -726,7 +726,24 @@ $.widget("ui.selectmenu", {
 				}
 			}
 	},
-
+	
+	show: function( index, type ) {
+			var isGrp = ( type == "optgroup" ) ? true : false;
+			this._toggleDisplayElem( index, true, isGrp);			
+	},
+	
+	hide: function( index, type ) {
+			var isGrp = ( type == "optgroup" ) ? true : false;
+			this._toggleDisplayElem( index, false, isGrp);			
+	},
+	
+	_toggleDisplayElem: function( index, flag, isgroup) {
+			var $el = (!isgroup) ? this._optionLis.eq( index ) : this.list.find( 'li.ui-selectmenu-group-' + index );
+			if ( $el ) {
+				$el.css('display',[(flag) ? 'block' : 'none']);
+			}
+	},
+	
 	_disabled: function( elem ) {
 			return $( elem ).hasClass( 'ui-state-disabled' );
 	},
